@@ -35,6 +35,12 @@
                                 <strong><%= book.name %></strong> by <%= book.author %>
                                 <div class="book-meta">
                                     📍 Floor: <%= book.floor %> | 📋 Rack No: <%= book.rackNo || book.rack %>
+                                    <% if (user) { %>
+                                    <div style="margin-top: 10px;">
+                                        <a href="/edit/<%= book._id %>" class="btn-edit">✏️ Edit</a>
+                                        <button onclick="deleteBook('<%= book._id %>', '<%= book.name %>')" class="btn-delete">🗑️ Delete</button>
+                                    </div>
+                                    <% } %>
                                 </div>
                             </li>
                         <% }) %>
@@ -84,14 +90,20 @@
                         <div class="books-list">
                             <h2>📖 All Books</h2>
                             <ul>
-                                ${allBooks.map(book => `
-                                    <li>
-                                        <strong>${book.name}</strong> by ${book.author}
-                                        <div class="book-meta">
-                                            📍 Floor: ${book.floor} | 📋 Rack No: ${book.rackNo || book.rack}
+                            ${allBooks.map(book => `
+                                <li>
+                                    <strong>${book.name}</strong> by ${book.author}
+                                    <div class="book-meta">
+                                        📍 Floor: ${book.floor} | 📋 Rack No: ${book.rackNo || book.rack}
+                                        ${user ? `
+                                        <div style="margin-top: 10px;">
+                                            <a href="/edit/${book._id}" class="btn-edit">✏️ Edit</a>
+                                            <button onclick="deleteBook('${book._id}', '${book.name}')" class="btn-delete">🗑️ Delete</button>
                                         </div>
-                                    </li>
-                                `).join('')}
+                                        ` : ''}
+                                    </div>
+                                </li>
+                            `).join('')}
                             </ul>
                         </div>
                     `;
@@ -132,6 +144,12 @@
                                     <strong>${book.name}</strong> by ${book.author}
                                     <div class="book-meta">
                                         📍 Floor: ${book.floor} | 📋 Rack No: ${book.rackNo || book.rack}
+                                        ${user ? `
+                                        <div style="margin-top: 10px;">
+                                            <a href="/edit/${book._id}" class="btn-edit">✏️ Edit</a>
+                                            <button onclick="deleteBook('${book._id}', '${book.name}')" class="btn-delete">🗑️ Delete</button>
+                                        </div>
+                                        ` : ''}
                                     </div>
                                 </li>
                             `).join('')}
@@ -173,6 +191,31 @@
         if (initialQuery) {
             searchInput.value = initialQuery;
             performSearch(initialQuery);
+        }
+
+        // Delete book function
+        function deleteBook(bookId, bookName) {
+            if (confirm(`Are you sure you want to delete "${bookName}"?`)) {
+                fetch(`/delete/${bookId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Book deleted successfully!');
+                        location.reload(); // Refresh the page to show updated list
+                    } else {
+                        alert('Error deleting book: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting book. Please try again.');
+                });
+            }
         }
     </script>
 </body>

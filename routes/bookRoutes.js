@@ -89,4 +89,67 @@ router.post("/add", requireAuth, async (req, res) => {
     }
 });
 
+// 📌 Render Edit Book Page (protected)
+router.get("/edit/:id", requireAuth, async (req, res) => {
+    try {
+        const bookId = req.params.id;
+        console.log(`Edit book page accessed for ID: ${bookId}`);
+        
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).send("Book not found");
+        }
+        
+        res.render("editBook", { book });
+    } catch (err) {
+        console.error("Edit book page error:", err);
+        res.status(500).send("Server Error");
+    }
+});
+
+// 📌 Update Book (protected)
+router.post("/edit/:id", requireAuth, async (req, res) => {
+    const { name, author, floor, rack } = req.body;
+    const bookId = req.params.id;
+    
+    try {
+        console.log(`Updating book: ${name} by ${author}`);
+        
+        const updatedBook = await Book.findByIdAndUpdate(
+            bookId,
+            { name, author, floor, rack },
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedBook) {
+            return res.status(404).send("Book not found");
+        }
+        
+        console.log("Book updated successfully");
+        res.redirect("/");
+    } catch (err) {
+        console.error("Update book error:", err);
+        res.status(500).send("Error Updating Book");
+    }
+});
+
+// 📌 Delete Book (protected)
+router.delete("/delete/:id", requireAuth, async (req, res) => {
+    try {
+        const bookId = req.params.id;
+        console.log(`Deleting book with ID: ${bookId}`);
+        
+        const deletedBook = await Book.findByIdAndDelete(bookId);
+        if (!deletedBook) {
+            return res.status(404).json({ success: false, message: "Book not found" });
+        }
+        
+        console.log(`Book "${deletedBook.name}" deleted successfully`);
+        res.json({ success: true, message: "Book deleted successfully" });
+    } catch (err) {
+        console.error("Delete book error:", err);
+        res.status(500).json({ success: false, message: "Error deleting book" });
+    }
+});
+
 module.exports = router;

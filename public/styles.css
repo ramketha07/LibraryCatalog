@@ -112,6 +112,23 @@ body {
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.form-group select {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    cursor: pointer;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
 .search-form {
     display: flex;
     gap: 15px;
@@ -357,6 +374,49 @@ tr:hover {
 
 .back-btn:hover {
     box-shadow: 0 6px 20px rgba(113, 128, 150, 0.4);
+}
+
+/* Edit Button */
+.btn-edit {
+    background: linear-gradient(45deg, #38a169, #2f855a);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(56, 161, 105, 0.3);
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.btn-edit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(56, 161, 105, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Delete Button */
+.btn-delete {
+    background: linear-gradient(45deg, #e53e3e, #c53030);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+}
+
+.btn-delete:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
 }
 
 /* Loading Animation */
