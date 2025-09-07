@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book - College Library</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>📚 College Library</h1>
+            <p class="subtitle">Add New Books to Your Collection</p>
+        </div>
+
+        <!-- Add Book Form -->
+        <div class="form-container">
+            <h1>➕ Add a New Book</h1>
+            <form method="POST" action="/add">
+                <div class="form-group">
+                    <label for="name">📖 Book Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter the book title..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">✍️ Author Name</label>
+                    <input type="text" id="author" name="author" placeholder="Enter the author's name..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="floor">🏢 Floor Number</label>
+                    <input type="number" id="floor" name="floor" placeholder="Enter floor number..." required min="1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rack">📋 Rack Number</label>
+                    <input type="number" id="rack" name="rack" placeholder="Enter rack number..." required min="1">
+                </div>
+                
+                <button type="submit" class="btn">📚 Add Book to Library</button>
+            </form>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <a href="/" class="btn btn-secondary back-btn">🔙 Back to Home</a>
+            <a href="/books" class="btn btn-secondary">🔍 Browse All Books</a>
+            <form method="POST" action="/logout" style="display:inline;">
+                <button type="submit" class="btn btn-secondary">🚪 Logout</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

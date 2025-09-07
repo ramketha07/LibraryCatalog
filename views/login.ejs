@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - College Library</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .error {
+            color: #e53e3e;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+    </style>
+    </head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Admin Login</h1>
+            <p class="subtitle">Only authorized admins can add books</p>
+        </div>
+
+        <div class="form-container">
+            <h1>Sign in</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <form method="POST" action="/login">
+                <div class="form-group">
+                    <label for="email">📧 Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter admin email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">🔑 Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+
+        <div class="nav">
+            <a href="/" class="btn btn-secondary back-btn">🏠 Back to Home</a>
+            <a href="/books" class="btn btn-secondary">🔍 Browse All Books</a>
+        </div>
+    </div>
+</body>
+</html>
+
+

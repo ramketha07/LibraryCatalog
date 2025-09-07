@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Books - College Library</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>📚 College Library</h1>
+            <p class="subtitle">Browse and Search Your Book Collection</p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="form-container">
+            <form action="/books" method="GET" class="search-form" id="searchForm">
+                <input type="text" name="search" id="searchInput" placeholder="Search for a book..." value="<%= searchQuery || '' %>" autocomplete="off">
+                <button type="submit">🔍 Search</button>
+            </form>
+            <div id="searchStatus" class="search-status"></div>
+        </div>
+
+        <!-- Books List -->
+        <div id="booksList">
+            <% if (books && books.length > 0) { %>
+                <div class="books-list">
+                    <h2>📖 Search Results</h2>
+                    <ul>
+                        <% books.forEach(book => { %>
+                            <li>
+                                <strong><%= book.name %></strong> by <%= book.author %>
+                                <div class="book-meta">
+                                    📍 Floor: <%= book.floor %> | 📋 Rack No: <%= book.rackNo || book.rack %>
+                                </div>
+                            </li>
+                        <% }) %>
+                    </ul>
+                </div>
+            <% } else if (searchQuery) { %>
+                <div class="message no-results">
+                    <p>🔍 No books found for "<%= searchQuery %>". Try a different search term.</p>
+                </div>
+            <% } else { %>
+                <div class="message">
+                    <p>📚 No books available. Add some books to get started!</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <a href="/" class="btn btn-secondary back-btn">🏠 Back to Home</a>
+            <% if (user) { %>
+                <a href="/add" class="btn">➕ Add New Book</a>
+                <form method="POST" action="/logout" style="display:inline;">
+                    <button type="submit" class="btn btn-secondary">🚪 Logout</button>
+                </form>
+            <% } else { %>
+                <a href="/login" class="btn">🔐 Admin Login</a>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        // Get all books data for client-side search
+        const allBooks = JSON.parse('<%- JSON.stringify(books || []) %>');
+        const searchInput = document.getElementById('searchInput');
+        const booksList = document.getElementById('booksList');
+        const searchStatus = document.getElementById('searchStatus');
+        const searchForm = document.getElementById('searchForm');
+        
+        let searchTimeout;
+
+        // Dynamic search function
+        function performSearch(query) {
+            if (!query.trim()) {
+                // Show all books when search is empty
+                if (allBooks.length > 0) {
+                    booksList.innerHTML = `
+                        <div class="books-list">
+                            <h2>📖 All Books</h2>
+                            <ul>
+                                ${allBooks.map(book => `
+                                    <li>
+                                        <strong>${book.name}</strong> by ${book.author}
+                                        <div class="book-meta">
+                                            📍 Floor: ${book.floor} | 📋 Rack No: ${book.rackNo || book.rack}
+                                        </div>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    booksList.innerHTML = `
+                        <div class="message">
+                            <p>📚 No books available. Add some books to get started!</p>
+                        </div>
+                    `;
+                }
+                searchStatus.innerHTML = '';
+                return;
+            }
+
+            // Show loading state
+            searchStatus.innerHTML = '<div class="loading">Searching...</div>';
+
+            // Filter books based on search query
+            const filteredBooks = allBooks.filter(book => 
+                book.name.toLowerCase().includes(query.toLowerCase()) ||
+                book.author.toLowerCase().includes(query.toLowerCase()) ||
+                book.floor.toString().includes(query) ||
+                (book.rackNo || book.rack).toString().includes(query)
+            );
+
+            // Clear loading state
+            searchStatus.innerHTML = '';
+
+            // Display results
+            if (filteredBooks.length > 0) {
+                booksList.innerHTML = `
+                    <div class="books-list">
+                        <h2>📖 Search Results for "${query}"</h2>
+                        <p class="search-count">Found ${filteredBooks.length} book(s)</p>
+                        <ul>
+                            ${filteredBooks.map(book => `
+                                <li>
+                                    <strong>${book.name}</strong> by ${book.author}
+                                    <div class="book-meta">
+                                        📍 Floor: ${book.floor} | 📋 Rack No: ${book.rackNo || book.rack}
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                booksList.innerHTML = `
+                    <div class="message no-results">
+                        <p>🔍 No books found for "${query}". Try a different search term.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Handle input changes with debouncing
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value;
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            // Set new timeout for search (300ms delay)
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        });
+
+        // Handle form submission (fallback for non-JS users)
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = searchInput.value;
+            performSearch(query);
+        });
+
+        // Initialize with current search query if any
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialQuery = urlParams.get('search');
+        if (initialQuery) {
+            searchInput.value = initialQuery;
+            performSearch(initialQuery);
+        }
+    </script>
+</body>
+</html>
